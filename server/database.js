@@ -1,35 +1,31 @@
 // server/database.js
-import sqlite3 from 'sqlite3';
-import { open } from 'sqlite';
-import path from 'path';
+import mongoose from 'mongoose';
 
-// Path to database file (it will create this file if it doesn't exist)
-const dbPath = path.resolve('analysis.db');
+// MongoDB Atlas URI (use environment variable for security)
+const dbURI = process.env.MONGO_DB_URI || 'your_mongo_connection_string'; // Replace with your MongoDB URI
 
-// Function to open the database connection
-const openDb = async () => {
-  return open({
-    filename: dbPath,
-    driver: sqlite3.Database,
-  });
+// Connect to MongoDB Atlas
+const connectDb = async () => {
+  try {
+    await mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true });
+    console.log('Connected to MongoDB Atlas');
+  } catch (err) {
+    console.error('Failed to connect to MongoDB Atlas:', err.message);
+  }
 };
 
-// Create table if it does not exist
-const initDb = async () => {
-  const db = await openDb();
-  await db.exec(`
-    CREATE TABLE IF NOT EXISTS analysis_results (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      postId TEXT,
-      date TEXT,
-      overallScore REAL,
-      overallSentiment TEXT
-    )
-  `);
-  await db.close();
-};
+// Define the schema for the analysis results
+const AnalysisResultSchema = new mongoose.Schema({
+  postId: { type: String, required: true },
+  date: { type: String, required: true },
+  overallScore: { type: Number, required: true },
+  overallSentiment: { type: String, required: true }
+});
 
-// Initialize the database
-initDb().catch(console.error);
+// Create a model based on the schema
+const AnalysisResult = mongoose.model('AnalysisResult', AnalysisResultSchema);
 
-export { openDb }; // Export the openDb function for use in other files
+// Connect to the database
+connectDb();
+
+export { mongoose, AnalysisResult };  // Export mongoose and model for use in other files
