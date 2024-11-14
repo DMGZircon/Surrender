@@ -197,7 +197,6 @@ export const Hero: React.FC<IHero> = ({ setIsLoading }) => {
                         <Button className='bg-gray-700 text-white px-4 py-2 rounded-md text-sm font-normal' type='submit'>Submit</Button>
                     </Box>
                 </form>
-
                 {currentComments.length > 0 && (
                     <TableContainer component={Paper} sx={{ marginTop: "2em" }}>
                         <Table sx={{ minWidth: 650 }} aria-label="sentiment analysis table">
@@ -246,31 +245,34 @@ export const Hero: React.FC<IHero> = ({ setIsLoading }) => {
                     ))}
                 </div>
             </div>
-
             <div className="section2 sm:w-1/2 w-full flex flex-col gap-4 px-6">
-         {overallAnalysis && (
-        <div className="analysis-results">
-            <strong><TypeAnimation
-                sequence={[
-                    `Overall Analysis\n\n` +
-                    `Overall Score: ${overallAnalysis.overallScore}\n` +
-                    `Overall Sentiment: ${overallAnalysis.overallSentiment}\n` +
-                    `Top Positive Words: ${overallAnalysis.topPositiveWords.join(', ')}\n` +
-                    `Top Negative Words: ${overallAnalysis.topNegativeWords.join(', ')}\n` +
-                    `Score Magnitude: ${overallAnalysis.scoreMagnitude}\n\n` +
-                    `Core Sentences:\n` +
-                    overallAnalysis.coreSentences
-                        .map((sentence) => `${sentence.comment} (Score: ${sentence.score})`)
-                        .join('\n')
-                ]}
-                wrapper="div"
-                speed={99}
-                repeat={0} // Animation plays only once
-                className="text-lg"
-                style={{ whiteSpace: 'pre-line' }}
-            /></strong>
-        </div>
-    )}
+        {overallAnalysis && (
+            <div className="analysis-results">
+                <strong>
+                    {typeof window !== 'undefined' && (
+                        <TypeAnimation
+                            sequence={[
+                                `Overall Analysis\n\n` +
+                                `Overall Score: ${overallAnalysis.overallScore}\n` +
+                                `Overall Sentiment: ${overallAnalysis.overallSentiment}\n` +
+                                `Top Positive Words: ${overallAnalysis.topPositiveWords.join(', ')}\n` +
+                                `Top Negative Words: ${overallAnalysis.topNegativeWords.join(', ')}\n` +
+                                `Score Magnitude: ${overallAnalysis.scoreMagnitude}\n\n` +
+                                `Core Sentences:\n` +
+                                overallAnalysis.coreSentences
+                                    .map((sentence) => `${sentence.comment} (Score: ${sentence.score})`)
+                                    .join('\n'),
+                            ]}
+                            wrapper="div"
+                            speed={99}
+                            repeat={0}
+                            className="text-lg"
+                            style={{ whiteSpace: 'pre-line' }}
+                        />
+                    )}
+                </strong>
+            </div>
+        )}
 </div>
         </div>
     );
