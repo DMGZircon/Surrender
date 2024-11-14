@@ -28,4 +28,4 @@ const AnalysisResult = mongoose.model('AnalysisResult', AnalysisResultSchema);
 // Connect to the database
 connectDb();
 
-export { mongoose, AnalysisResult };  // Export mongoose and model for use in other files
+export { connectDb, AnalysisResult };  // Export mongoose and model for use in other files
