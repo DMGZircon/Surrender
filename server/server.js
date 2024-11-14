@@ -6,7 +6,7 @@ import cors from 'cors';
 import AnalysisResult from './models/AnalysisResult.js'; // Import the Mongoose model
 
 const app = express();
-const PORT = process.env.PORT || 3000; // Use port 3000 for Vercel
+const PORT = process.env.PORT || 5000; // Use port 3000 for Vercel
 
 // Middleware
 app.use(bodyParser.json());
