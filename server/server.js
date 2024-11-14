@@ -1,11 +1,12 @@
 // server/server.js
 import express from 'express';
+import 'dotenv/config';
 import bodyParser from 'body-parser';
 import cors from 'cors';
-import { openDb } from './database.js'; // Import the openDb function
+import AnalysisResult from './models/AnalysisResult.js'; // Import the Mongoose model
 
 const app = express();
-const PORT = 5000;
+const PORT = process.env.PORT || 3000; // Use port 3000 for Vercel
 
 // Middleware
 app.use(bodyParser.json());
@@ -16,13 +17,15 @@ app.post('/api/saveResult', async (req, res) => {
   const { postId, date, overallScore, overallSentiment } = req.body;
 
   try {
-    const db = await openDb();
-    await db.run(
-      `INSERT INTO analysis_results (postId, date, overallScore, overallSentiment) VALUES (?, ?, ?, ?)`,
-      [postId, date, overallScore, overallSentiment]
-    );
+    const newResult = new AnalysisResult({
+      postId,
+      date,
+      overallScore,
+      overallSentiment,
+    });
+
+    await newResult.save();
     res.status(200).send('Analysis result saved successfully');
-    await db.close();
   } catch (error) {
     console.error('Error saving analysis result:', error.message);
     res.status(500).send('Error saving analysis result');
@@ -32,29 +35,19 @@ app.post('/api/saveResult', async (req, res) => {
 // Endpoint to retrieve all analysis results
 app.get('/api/getResults', async (req, res) => {
   try {
-    const db = await openDb();
-    const results = await db.all(`SELECT * FROM analysis_results`);
+    const results = await AnalysisResult.find();
     res.status(200).json(results);
-    await db.close();
   } catch (error) {
     console.error('Error retrieving results:', error.message);
     res.status(500).send('Error retrieving results');
   }
 });
 
-// New endpoint to get top posts
+// Endpoint to get top posts
 app.get('/api/getTopPosts', async (req, res) => {
   try {
-    const db = await openDb();
-    // Modify the query to fit your logic for determining "top posts"
-    const topPosts = await db.all(`
-      SELECT postId, date, overallScore, overallSentiment 
-      FROM analysis_results 
-      ORDER BY overallScore DESC 
-      LIMIT 10
-    `);
+    const topPosts = await AnalysisResult.find().sort({ overallScore: -1 }).limit(10);
     res.status(200).json(topPosts);
-    await db.close();
   } catch (error) {
     console.error('Error fetching top posts:', error.message);
     res.status(500).send('Error fetching top posts');
@@ -65,16 +58,14 @@ app.get('/api/getTopPosts', async (req, res) => {
 app.delete('/api/deletePost/:id', async (req, res) => {
   const { id } = req.params;
   try {
-    const db = await openDb();
-    const result = await db.run(`DELETE FROM analysis_results WHERE id = ?`, [id]);
-    if (result.changes === 1) {
+    const result = await AnalysisResult.findByIdAndDelete(id);
+    if (result) {
       res.status(200).send(`Post with ID ${id} deleted successfully`);
     } else {
       res.status(404).send(`Post with ID ${id} not found`);
     }
-    await db.close();
   } catch (error) {
-    console.error('Error deleting post:', error);
+    console.error('Error deleting post:', error.message);
     res.status(500).send('Internal server error');
   }
 });
@@ -82,10 +73,8 @@ app.delete('/api/deletePost/:id', async (req, res) => {
 // Endpoint to delete all posts
 app.delete('/api/deleteAllPosts', async (req, res) => {
   try {
-    const db = await openDb();
-    await db.run(`DELETE FROM analysis_results`);
+    await AnalysisResult.deleteMany({});
     res.status(200).send('All posts deleted successfully');
-    await db.close();
   } catch (error) {
     console.error('Error deleting all posts:', error.message);
     res.status(500).send('Error deleting all posts');
