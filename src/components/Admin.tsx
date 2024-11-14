@@ -94,7 +94,7 @@ export const Admin = () => {
 
 const fetchAnalysisHistory = async () => {
   try {
-    const response = await axios.get('http://localhost:5000/api/getResults');
+    const response = await axios.get('/api/getResults');
     console.log('API Response:', response.data);
 
     // Check if the data is directly an array or nested in an object (e.g., { results: [...] })
@@ -113,7 +113,7 @@ const fetchAnalysisHistory = async () => {
 
   const fetchTopPosts = async () => {
     try {
-      const response = await axios.get<AnalysisResult[]>('http://localhost:5000/api/getTopPosts');
+      const response = await axios.get<AnalysisResult[]>('/api/getTopPosts');
       setTopPosts(response.data);
     } catch (error) {
       console.error('Error fetching top posts:', error);
@@ -134,7 +134,7 @@ const fetchAnalysisHistory = async () => {
     };
 
     try {
-      const response = await axios.post('http://localhost:5000/api/saveResult', newResult);
+      const response = await axios.post('/api/saveResult', newResult);
       setAnalysisHistory((prevHistory) => [...prevHistory, response.data as AnalysisResult]);
       setNewPostId('');
       setNewOverallScore(0);
@@ -153,7 +153,7 @@ const fetchAnalysisHistory = async () => {
   
   const handleDeletePost = async (id: number) => {
     try {
-      await axios.delete(`http://localhost:5000/api/deletePost/${id}`);
+      await axios.delete(`/api/deletePost/${id}`);
       setAnalysisHistory((prev) => prev.filter((post) => post.id !== id));
       setTopPosts((prev) => prev.filter((post) => post.id !== id));
     } catch (error) {
@@ -163,7 +163,7 @@ const fetchAnalysisHistory = async () => {
 
   const handleDeleteAllPosts = async () => {
     try {
-      await axios.delete('http://localhost:5000/api/deleteAllPosts');
+      await axios.delete('/api/deleteAllPosts');
       setAnalysisHistory([]);
       setTopPosts([]);
     } catch (error) {
