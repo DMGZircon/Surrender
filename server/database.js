@@ -2,7 +2,7 @@
 import mongoose from 'mongoose';
 
 // MongoDB Atlas URI (use environment variable for security)
-const dbURI = process.env.MONGO_DB_URI || 'your_mongo_connection_string'; // Replace with your MongoDB URI
+const dbURI = process.env.MONGO_DB_URI || 'mongodb+srv://codesmiths9:o8nDKrFh6bv7WdMD@cluster0.fulpi.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'; // Replace with your MongoDB URI
 
 // Connect to MongoDB Atlas
 const connectDb = async () => {
