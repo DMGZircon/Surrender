@@ -1,5 +1,5 @@
 // pages/api/saveResult.js
-import { connectDb, AnalysisResult } from '../../server/database.js';
+import { connectDb, AnalysisResult } from '../../lib/database.js';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
