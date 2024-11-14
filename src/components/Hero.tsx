@@ -64,7 +64,7 @@ export const Hero: React.FC<IHero> = ({ setIsLoading }) => {
         };
         console.log(analyzed);
         try {
-            await axios.post('https://surrender-nu.vercel.app/api/saveResult', result);
+            await axios.post('http:localhost:5000/api/saveResult', result);
             console.log('Analysis result saved to the database successfully.');
         } catch (error) {
             console.error('Error saving analysis result:', error);
